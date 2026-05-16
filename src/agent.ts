@@ -1,7 +1,6 @@
 import * as dotenv from "dotenv";
 import * as readline from "readline";
 import { Keypair } from "@solana/web3.js";
-import bs58 from "bs58";
 import TokenPlugin from "@solana-agent-kit/plugin-token";
 import NFTPlugin from "@solana-agent-kit/plugin-nft";
 import DefiPlugin from "@solana-agent-kit/plugin-defi";
@@ -29,8 +28,8 @@ const llm = new ChatOpenAI({
 });
 
 // 2. Wallet de Solana
-const bytes = new Uint8Array(KEY);
-const keypair = Keypair.fromSecretKey(bytes);
+const keypair = Keypair.fromSecretKey(
+  Uint8Array.from(JSON.parse(process.env.SOLANA_PRIVATE_KEY!)));
 const wallet = new KeypairWallet(keypair, process.env.RPC_URL!);
 const MY_ADRS = keypair.publicKey.toBase58();
 
@@ -38,7 +37,7 @@ const MY_ADRS = keypair.publicKey.toBase58();
 const solanaAgent = new SolanaAgentKit(wallet, process.env.RPC_URL!, {})
   .use(TokenPlugin)
   .use(BinancePlugin)
-  .use(SolanaReaderPlugin)
+  .use(SolanaReaderPlugin) 
   .use(NFTPlugin)
   .use(DefiPlugin)
   .use(MiscPlugin)
