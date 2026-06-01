@@ -13,6 +13,7 @@ import { MemorySaver } from "@langchain/langgraph";
 import { SolanaAgentKit, createLangchainTools, KeypairWallet } from "solana-agent-kit";
 import BinancePlugin from "./plugins/binance";
 import SolanaReaderPlugin from "./plugins/solana-reader";
+import SolanaManagerPlugin from "./plugins/solana-manager";
 
 dotenv.config();
 
@@ -35,13 +36,14 @@ const MY_ADRS = keypair.publicKey.toBase58();
 
 // 3. SolanaAgentKit con plugins
 const solanaAgent = new SolanaAgentKit(wallet, process.env.RPC_URL!, {})
-  .use(TokenPlugin)
-  // .use(BinancePlugin)
-  // .use(SolanaReaderPlugin) 
-  .use(NFTPlugin)
+  // .use(TokenPlugin)
+  .use(BinancePlugin)
+  .use(SolanaReaderPlugin) 
+  .use(SolanaManagerPlugin)
+  // .use(NFTPlugin)
   // .use(DefiPlugin)
   // .use(MiscPlugin)
-  .use(BlinksPlugin);
+  // .use(BlinksPlugin);
 
 // 4. Herramientas para LangChain
 const tools = createLangchainTools(solanaAgent, solanaAgent.actions);
@@ -67,7 +69,11 @@ const agent = createReactAgent({
     REGLA CRÍTICA: Cuando el usuario proporcione una dirección de wallet en su mensaje actual,
     SIEMPRE usa ESA dirección específica como wallet_address, ignorando cualquier dirección
     mencionada en mensajes anteriores de la conversación. El mensaje más reciente del usuario
-    tiene PRIORIDAD ABSOLUTA sobre el historial.`,
+    tiene PRIORIDAD ABSOLUTA sobre el historial.
+    
+    REGLA IMPORTANTE: Cuando el usuario proporcione una URI o URL para metadata de NFT,
+    úsala EXACTAMENTE como la proporcionó sin intentar validarla, modificarla ni verificar
+    si es accesible. Pásala directamente al tool NFT_CREATE_ASSET como parámetro uri.`,
 });
 
 async function chat() {
@@ -81,7 +87,7 @@ async function chat() {
   const threadId = "session-1";
 
   const askQuestion = () => {
-    rl.question(">>>> Tú: ", async (input) => {
+    rl.question(">>>> 👉 Tú: ", async (input) => {
       if (input.toLowerCase() === "exit") {
         rl.close();
         return;
