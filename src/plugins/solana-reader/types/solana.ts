@@ -2,14 +2,29 @@ export interface GetSolBalanceInput {
   wallet_address: string;
 }
 
-export interface GetSolBalanceResponse {
-  wallet_address: string;
-  balance_sol: number;
-  balance_lamports: number;
-}
-
 export interface GetTokenAccountsInput {
   wallet_address: string;
+}
+
+export interface GetNFTsInput {
+  wallet_address: string;
+}
+
+export interface GetAccountOverviewInput {
+  wallet_address: string;
+}
+
+export interface GetTransactionInput {
+  signature: string;
+}
+
+export interface GetTransactionHistoryInput {
+  wallet_address: string;
+  limit?: number;
+}
+
+export interface GetTokenInfoInput {
+  mint_address: string;
 }
 
 export interface TokenAccount {
@@ -17,21 +32,22 @@ export interface TokenAccount {
   amount: string;
   decimals: number;
   uiAmount: number | null;
+  price_usd: number | null;
+  value_usd: number | null;
 }
 
-export interface GetTokenAccountsResponse {
-  wallet_address: string;
-  tokens: TokenAccount[];
+export interface NFTAttribute {
+  trait_type: string;
+  value: string | number;
 }
 
-export interface GetAccountInfoInput {
-  wallet_address: string;
-}
-
-export interface GetAccountInfoResponse {
-  wallet_address: string;
-  executable: boolean;
-  owner: string;
-  lamports: number;
-  balance_sol: number;
+export interface NFTMetadata {
+  mint: string;
+  name: string;
+  symbol: string;
+  description: string | null;
+  image: string | null;
+  attributes: NFTAttribute[];
+  collection: string | null;
+  uri: string;
 }

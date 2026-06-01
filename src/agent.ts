@@ -36,11 +36,11 @@ const MY_ADRS = keypair.publicKey.toBase58();
 // 3. SolanaAgentKit con plugins
 const solanaAgent = new SolanaAgentKit(wallet, process.env.RPC_URL!, {})
   .use(TokenPlugin)
-  .use(BinancePlugin)
-  .use(SolanaReaderPlugin) 
+  // .use(BinancePlugin)
+  // .use(SolanaReaderPlugin) 
   .use(NFTPlugin)
-  .use(DefiPlugin)
-  .use(MiscPlugin)
+  // .use(DefiPlugin)
+  // .use(MiscPlugin)
   .use(BlinksPlugin);
 
 // 4. Herramientas para LangChain
@@ -55,7 +55,19 @@ const agent = createReactAgent({
   llm,
   tools: tools as any,
   checkpointSaver: memory,
-  messageModifier: `La wallet del usuario es: ${MY_ADRS}, usala para cualquier instruccion relacionada con leer "mi saldo" o "mi cuenta".`
+   messageModifier: `Eres un asistente experto en Solana y trading de criptomonedas.
+    Tienes acceso a herramientas reales para consultar datos de Binance y operar en Solana.
+    SIEMPRE usa las herramientas disponibles cuando el usuario pregunte sobre precios o datos de mercado.
+    Nunca inventes precios ni datos, siempre usa las tools para obtener información en tiempo real.
+
+    El wallet/cuenta del usuario con el que estás operando es: ${MY_ADRS}
+    Cuando el usuario diga "mi wallet", "mi cuenta", "mi saldo", "mis tokens" o cualquier referencia 
+    en primera persona, usa SIEMPRE este address como wallet_address.
+
+    REGLA CRÍTICA: Cuando el usuario proporcione una dirección de wallet en su mensaje actual,
+    SIEMPRE usa ESA dirección específica como wallet_address, ignorando cualquier dirección
+    mencionada en mensajes anteriores de la conversación. El mensaje más reciente del usuario
+    tiene PRIORIDAD ABSOLUTA sobre el historial.`,
 });
 
 async function chat() {
@@ -69,7 +81,7 @@ async function chat() {
   const threadId = "session-1";
 
   const askQuestion = () => {
-    rl.question("Tú: ", async (input) => {
+    rl.question(">>>> Tú: ", async (input) => {
       if (input.toLowerCase() === "exit") {
         rl.close();
         return;
@@ -82,7 +94,7 @@ async function chat() {
         );
 
         const lastMsg = response.messages[response.messages.length - 1];
-        console.log(`\nAgente: ${lastMsg.content}\n`);
+        console.log(`\n 🤖 Agente: ${lastMsg.content}\n`);
       } catch (err) {
         console.error("Error:", err);
       }
