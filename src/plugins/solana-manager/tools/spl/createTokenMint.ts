@@ -22,6 +22,7 @@ import {
 import { SolanaAgentKit } from "solana-agent-kit";
 import { getSplContext } from "./splHelper";
 import { CreateTokenMintInput } from "../../types/manager";
+import { addToken } from "../registry/splRegistry";
 
 export async function createTokenMint(agent: SolanaAgentKit, input: CreateTokenMintInput) {
   const { connection, payer } = getSplContext(agent);
@@ -82,7 +83,7 @@ export async function createTokenMint(agent: SolanaAgentKit, input: CreateTokenM
     false, "confirmed", { commitment: "confirmed" }, TOKEN_2022_PROGRAM_ID,
   );
 
-  return {
+  const result = {
     mint_address: mintKeypair.publicKey.toBase58(),
     payer_ata: payerATA.address.toBase58(),
     name: input.name,
@@ -90,4 +91,15 @@ export async function createTokenMint(agent: SolanaAgentKit, input: CreateTokenM
     decimals,
     signature,
   };
+
+  // Guardar en registry
+  addToken({
+    mint_address: result.mint_address,
+    payer_ata: result.payer_ata,
+    name: input.name,
+    symbol: input.symbol,
+    decimals,
+  });
+
+  return result;
 }

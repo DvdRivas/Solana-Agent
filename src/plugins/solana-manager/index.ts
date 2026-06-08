@@ -13,6 +13,8 @@ import { freezeThawAccount } from "./tools/spl/freezeThawAccount";
 import { setTokenAuthority } from "./tools/spl/setAuthority";
 import { manageDelegate } from "./tools/spl/delegate";
 import { closeTokenAccount } from "./tools/spl/closeTokenAccount";
+import { listNFTRegistry, removeAsset, removeCollection } from "./tools/registry/nftRegistry";
+import { listSPLRegistry, removeToken } from "./tools/registry/splRegistry";
 
 import CreateAssetAction from "./actions/nft/createAsset";
 import CreateCollectionAction from "./actions/nft/createCollection";
@@ -28,6 +30,15 @@ import FreezeThawAction from "./actions/spl/freezeThawAccount";
 import SetAuthorityAction from "./actions/spl/setAuthority";
 import DelegateAction from "./actions/spl/delegate";
 import CloseTokenAccountAction from "./actions/spl/closeTokenAccount";
+import {
+  ListNFTRegistryAction,
+  RemoveNFTRegistryAction,
+  RemoveCollectionRegistryAction,
+} from "./actions/registry/nftRegistryList";
+import {
+  ListSPLRegistryAction,
+  RemoveSPLRegistryAction,
+} from "./actions/registry/splRegistryList";
 
 const SolanaManagerPlugin = {
   name: "solana-manager",
@@ -48,6 +59,11 @@ const SolanaManagerPlugin = {
     setTokenAuthority,
     manageDelegate,
     closeTokenAccount,
+    listNFTRegistry,
+    removeAsset,
+    removeCollection,
+    listSPLRegistry,
+    removeToken,
   },
 
   actions: [
@@ -66,6 +82,11 @@ const SolanaManagerPlugin = {
     SetAuthorityAction,
     DelegateAction,
     CloseTokenAccountAction,
+    ListNFTRegistryAction,
+    RemoveNFTRegistryAction,
+    RemoveCollectionRegistryAction,
+    ListSPLRegistryAction,
+    RemoveSPLRegistryAction,
   ],
 
   initialize(agent: SolanaAgentKit) {

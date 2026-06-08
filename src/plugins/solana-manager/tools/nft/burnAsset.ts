@@ -8,6 +8,7 @@ import {
 import { SolanaAgentKit } from "solana-agent-kit";
 import { createUmiWithKeypair } from "./umiHelper";
 import { BurnAssetInput } from "../../types/manager";
+import { removeAsset } from "../registry/nftRegistry";
 
 export async function burnAsset(agent: SolanaAgentKit, input: BurnAssetInput) {
   const umi = createUmiWithKeypair(agent);
@@ -22,6 +23,9 @@ export async function burnAsset(agent: SolanaAgentKit, input: BurnAssetInput) {
   }
 
   const tx = await burn(umi, params).sendAndConfirm(umi);
+
+  // Eliminar del registry
+  removeAsset(input.asset_address);
 
   return {
     asset_address: input.asset_address,

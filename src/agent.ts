@@ -37,7 +37,7 @@ const MY_ADRS = keypair.publicKey.toBase58();
 // 3. SolanaAgentKit con plugins
 const solanaAgent = new SolanaAgentKit(wallet, process.env.RPC_URL!, {})
   // .use(TokenPlugin)
-  .use(BinancePlugin)
+  .use(BinancePlugin) 
   .use(SolanaReaderPlugin) 
   .use(SolanaManagerPlugin)
   // .use(NFTPlugin)

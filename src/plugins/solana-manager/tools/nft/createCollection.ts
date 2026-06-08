@@ -3,6 +3,7 @@ import { createCollection as mplCreateCollection } from "@metaplex-foundation/mp
 import { SolanaAgentKit } from "solana-agent-kit";
 import { createUmiWithKeypair } from "./umiHelper";
 import { CreateCollectionInput } from "../../types/manager";
+import { addCollection } from "../registry/nftRegistry";
 
 export async function createCollection(agent: SolanaAgentKit, input: CreateCollectionInput) {
   const umi = createUmiWithKeypair(agent);
@@ -14,8 +15,17 @@ export async function createCollection(agent: SolanaAgentKit, input: CreateColle
     uri: input.uri,
   }).sendAndConfirm(umi);
 
-  return {
+  const result = {
     collection_address: collectionSigner.publicKey.toString(),
     signature: Buffer.from(tx.signature).toString("base64"),
   };
+
+  // Guardar en registry
+  addCollection({
+    collection_address: result.collection_address,
+    name: input.name,
+    uri: input.uri,
+  });
+
+  return result;
 }
